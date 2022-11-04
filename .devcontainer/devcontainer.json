@@ -1,0 +1,28 @@
+{
+	"name": "Python 3",
+	"image": "mcr.microsoft.com/devcontainers/python:3.7",
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "lts"
+		},
+		"ghcr.io/devcontainers/features/git:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"njpwerner.autodocstring",
+				"GitHub.copilot",
+				"donjayamanne.githistory",
+				"KevinRose.vsc-python-indent",
+				"aaron-bond.better-comments",
+				"njqdev.vscode-python-typehint"
+			]
+		}
+	},
+	// "containerUser": "container",
+	"remoteUser": "container"
+}
