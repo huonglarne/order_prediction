@@ -1,6 +1,6 @@
 import pandas as pd
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     meta_order = pd.read_csv("data/data_order.csv")
     meta_order["CHECKOUT_DATE"] = pd.to_datetime(
         meta_order["CHECKOUT_DATE"], format="%Y-%m-%d"
@@ -22,14 +22,14 @@ if __name__ == '__main__':
     product_id_list = meta_order["PRODUCT_ID"].unique()
     all_sales = None
 
-    for prod_id in product_id_list[:5]:
+    for prod_id in product_id_list:
 
         ## ============================
         ## Fill out missing days
         ## ============================
-        product_orders = meta_order.loc[meta_order["PRODUCT_ID"] == prod_id].sort_values(
-            by="CHECKOUT_DATE"
-        )
+        product_orders = meta_order.loc[
+            meta_order["PRODUCT_ID"] == prod_id
+        ].sort_values(by="CHECKOUT_DATE")
         product_orders = (
             product_orders.groupby(["CHECKOUT_DATE", "PRODUCT_ID"])
             .sum()
@@ -75,10 +75,13 @@ if __name__ == '__main__':
         else:
             all_sales = product_orders
 
-    all_sales = all_sales.melt(id_vars=["PRODUCT_ID"], var_name="WEEK", value_name="SALES")
+    all_sales = all_sales.melt(
+        id_vars=["PRODUCT_ID"], var_name="WEEK", value_name="SALES"
+    )
 
-    train_weeks = round(all_sales.max()['WEEK'] * 0.8)
+    train_weeks = round(all_sales.max()["WEEK"] * 0.8)
     train = all_sales.loc[all_sales["WEEK"] < train_weeks]
     val = all_sales.loc[all_sales["WEEK"] >= train_weeks]
 
-    print(all_sales)
+    train.to_csv("data/train.csv", index=False)
+    val.to_csv("data/val.csv", index=False)
