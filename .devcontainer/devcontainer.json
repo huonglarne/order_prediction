@@ -1,28 +1,21 @@
 {
 	"name": "Python 3",
-	"image": "mcr.microsoft.com/devcontainers/python:3.7",
+	"context": "..",
+	"dockerFile": "../Dockerfile",
+	
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "lts"
 		},
-		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-python.python",
-				"ms-python.vscode-pylance",
-				"njpwerner.autodocstring",
-				"GitHub.copilot",
-				"donjayamanne.githistory",
-				"KevinRose.vsc-python-indent",
-				"aaron-bond.better-comments",
-				"njqdev.vscode-python-typehint"
-			]
-		}
-	},
-	// "containerUser": "container",
-	"remoteUser": "container"
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+
+	// Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
 }
