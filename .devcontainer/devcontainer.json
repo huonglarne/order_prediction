@@ -10,6 +10,23 @@
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
 
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"njpwerner.autodocstring",
+				// Optional extensions
+				"GitHub.copilot",
+				"donjayamanne.githistory",
+				"janisdd.vscode-edit-csv",
+				"KevinRose.vsc-python-indent",
+				"aaron-bond.better-comments",
+				"njqdev.vscode-python-typehint"
+			]
+		}
+	},
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
