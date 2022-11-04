@@ -25,6 +25,7 @@ if __name__ == "__main__":
     for prod_id in product_id_list:
 
         ## ============================
+        ## Get total sale for each day
         ## Fill out missing days
         ## ============================
         product_orders = meta_order.loc[
@@ -76,12 +77,8 @@ if __name__ == "__main__":
             all_sales = product_orders
 
     all_sales = all_sales.melt(
-        id_vars=["PRODUCT_ID"], var_name="WEEK", value_name="SALES"
+        id_vars=["PRODUCT_ID"], var_name="week", value_name="sales"
     )
 
-    train_weeks = round(all_sales.max()["WEEK"] * 0.8)
-    train = all_sales.loc[all_sales["WEEK"] < train_weeks]
-    val = all_sales.loc[all_sales["WEEK"] >= train_weeks]
-
-    train.to_csv("data/train.csv", index=False)
-    val.to_csv("data/val.csv", index=False)
+    all_sales.rename(columns = {'PRODUCT_ID':'product'}, inplace = True)
+    all_sales.to_csv("data/sales_data.csv", index=False)
