@@ -1,4 +1,6 @@
 notebook
 pandas
 plotly
+sklearn
+lightgbm
 black
