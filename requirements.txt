@@ -4,3 +4,4 @@ plotly
 sklearn
 lightgbm
 black
+pytest
