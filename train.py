@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_log_error
 from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
 
 data = pd.read_csv('data/sales_data.csv')
 
@@ -36,7 +35,7 @@ for week in range(start_week, train_week_split):
     xtr, xts = train.drop(['sales'], axis=1), val.drop(['sales'], axis=1)
     ytr, yts = train['sales'].values, val['sales'].values
     
-    mdl = LGBMRegressor(n_estimators=1000, learning_rate=0.01)
+    mdl = RandomForestRegressor(n_estimators=1000, n_jobs=-1, random_state=0)
     mdl.fit(xtr, np.log1p(ytr))
     
     p = np.expm1(mdl.predict(xts))
