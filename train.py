@@ -1,6 +1,11 @@
+import pickle
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+from onnxruntime import InferenceSession
+from src.constants import NON_FEATURES
 
 from src.utils import rmse
 from src.preprocess_utils import get_past_features, preprocess_data_order
@@ -8,6 +13,7 @@ from src.preprocess_utils import get_past_features, preprocess_data_order
 order_data = pd.read_csv("data/data_order.csv")
 weekly_sales_data = preprocess_data_order(order_data, "2022-04-30")
 features = get_past_features(weekly_sales_data, num_past_weeks=2)
+features.to_csv("data/features.csv", index=False)
 
 start_week = (
     int(features.min()["week"]) + 1
@@ -22,12 +28,11 @@ for week in range(start_week, train_val_week_split):
     train = features[features["week"] < week]
     val = features[features["week"] == week]
 
-    non_features = ["sales", "product", "week"]
-    train_features = train.drop(non_features, axis=1)
-    train_sales_gt = train["sales"]
+    train_features = train.drop(NON_FEATURES, axis=1).values
+    train_sales_gt = train["sales"].values
 
-    val_features = val.drop(non_features, axis=1)
-    val_sales_gt = val["sales"]
+    val_features = val.drop(NON_FEATURES, axis=1).values
+    val_sales_gt = val["sales"].values
 
     # train
     model = RandomForestRegressor(n_estimators=500, n_jobs=-1, random_state=0)
@@ -45,10 +50,22 @@ print("Mean Error: %.5f" % np.mean(mean_error))
 
 # test
 test = features[features["week"] >= train_val_week_split]
-test_features = test.drop(non_features, axis=1)
-test_sales_gt = test["sales"]
+test_features = test.drop(NON_FEATURES, axis=1).values
+test_sales_gt = test["sales"].values
 
 test_sales_pred = np.expm1(model.predict(test_features))
 error = rmse(test_sales_gt, test_sales_pred)
 
 print("Test Error: %.5f" % error)
+
+
+n_features = test_features.shape[1]
+initial_type = [('float_input', FloatTensorType([None, n_features]))]
+onx = convert_sklearn(model, initial_types=initial_type)
+with open( "model.onnx", "wb" ) as f:
+    f.write(onx.SerializeToString())
+
+sess = InferenceSession("model.onnx", None)
+input_name = sess.get_inputs()[0].name
+res = sess.run(None, {input_name: test_features.astype(np.float32)})
+res = res[0][:, 0]

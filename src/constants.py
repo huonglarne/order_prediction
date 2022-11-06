@@ -1,1 +1,2 @@
 RELEVANT_COLUMNS = {"PRODUCT_ID", "QUANTITY", "CHECKOUT_DATE"}
+NON_FEATURES = {"sales", "product", "week"}
