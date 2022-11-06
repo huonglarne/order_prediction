@@ -38,7 +38,7 @@ if __name__ == "__main__":
     )
 
     all_sales.rename(columns={"PRODUCT_ID": "product"}, inplace=True)
-    all_sales.to_csv("data/sales_data.csv", index=False)
+    all_sales.to_csv("sales_data.csv", index=False)
 
 
 # start_date = product_orders["CHECKOUT_DATE"].min()
