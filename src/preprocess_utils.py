@@ -5,9 +5,36 @@ from pandas import DataFrame
 from src.constants import RELEVANT_COLUMNS
 
 
-def preprocess_data_order(
-    order_data: DataFrame, end_date: str
-) -> DataFrame:
+def get_past_features(weekly_sales_data: DataFrame, num_past_weeks=2) -> DataFrame:
+    """Get past weeks' sales and sales difference as features.
+
+    Args:
+        weekly_sales_data (DataFrame): Weekly sales data.
+        num_past_weeks (int, optional): Number of previous weeks to consider.
+
+    Returns:
+        DataFrame: Past features for prediction model.
+    """
+    assert set(weekly_sales_data.columns) == {"product", "week", "sales"}
+    for i in range(num_past_weeks):
+        shift_num = i + 1
+
+        sale_col_name = f"last-{shift_num}_week_sales"
+        diff_col_name = f"last-{shift_num}_week_diff"
+
+        weekly_sales_data[sale_col_name] = weekly_sales_data.groupby(["product"])[
+            "sales"
+        ].shift(shift_num)
+        weekly_sales_data[diff_col_name] = weekly_sales_data.groupby(["product"])[
+            sale_col_name
+        ].diff()
+
+        weekly_sales_data = weekly_sales_data.dropna()
+
+    return weekly_sales_data
+
+
+def preprocess_data_order(order_data: DataFrame, end_date: str) -> DataFrame:
     """Preprocess the order data to weekly sales data over a period of all products in database.
 
     Args:
@@ -26,12 +53,11 @@ def preprocess_data_order(
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
     start_date = str(start_date.replace(day=1).date())
 
-    end_date = order_data["CHECKOUT_DATE"].max()
-    end_date = datetime.strptime(end_date, "%Y-%m-%d")
-
+    # end_date = order_data["CHECKOUT_DATE"].max()
+    # end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
     product_id_list = order_data["PRODUCT_ID"].unique()
-    all_sales = None
+    weekly_sales_data = None
 
     for prod_id in product_id_list:
         product_orders = order_data[order_data["PRODUCT_ID"] == prod_id]
@@ -39,17 +65,19 @@ def preprocess_data_order(
             product_orders, start_date, end_date
         )
 
-        if all_sales is not None:
-            all_sales = pd.concat([all_sales, product_weekly_sales], ignore_index=True)
+        if weekly_sales_data is not None:
+            weekly_sales_data = pd.concat(
+                [weekly_sales_data, product_weekly_sales], ignore_index=True
+            )
         else:
-            all_sales = product_weekly_sales
+            weekly_sales_data = product_weekly_sales
 
-    all_sales = all_sales.melt(
+    weekly_sales_data = weekly_sales_data.melt(
         id_vars=["PRODUCT_ID"], var_name="week", value_name="sales"
     )
 
-    all_sales.rename(columns={"PRODUCT_ID": "product"}, inplace=True)
-    return all_sales
+    weekly_sales_data.rename(columns={"PRODUCT_ID": "product"}, inplace=True)
+    return weekly_sales_data
 
 
 def preprocess_to_weekly_sales(
