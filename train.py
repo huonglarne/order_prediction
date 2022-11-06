@@ -12,7 +12,7 @@ from src.preprocess_utils import get_past_features, preprocess_data_order
 
 order_data = pd.read_csv("data/data_order.csv")
 weekly_sales_data = preprocess_data_order(order_data, "2022-04-30")
-features = get_past_features(weekly_sales_data, num_past_weeks=2)
+features = get_past_features(weekly_sales_data, num_past_weeks=1)
 features.to_csv("data/features.csv", index=False)
 
 start_week = (
@@ -35,7 +35,7 @@ for week in range(start_week, train_val_week_split):
     val_sales_gt = val["sales"].values
 
     # train
-    model = RandomForestRegressor(n_estimators=500, n_jobs=-1, random_state=0)
+    model = RandomForestRegressor(n_estimators=2, n_jobs=-1, random_state=0)
     model.fit(train_features, np.log1p(train_sales_gt))
 
     # val
@@ -58,14 +58,16 @@ error = rmse(test_sales_gt, test_sales_pred)
 
 print("Test Error: %.5f" % error)
 
-
+print("Writing ONNX model to disk...")
 n_features = test_features.shape[1]
-initial_type = [('float_input', FloatTensorType([None, n_features]))]
+initial_type = [("float_input", FloatTensorType([None, n_features]))]
 onx = convert_sklearn(model, initial_types=initial_type)
-with open( "model.onnx", "wb" ) as f:
+with open("model.onnx", "wb") as f:
     f.write(onx.SerializeToString())
 
 sess = InferenceSession("model.onnx", None)
 input_name = sess.get_inputs()[0].name
 res = sess.run(None, {input_name: test_features.astype(np.float32)})
 res = res[0][:, 0]
+
+print(res.shape)
