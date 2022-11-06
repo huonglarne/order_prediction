@@ -67,7 +67,7 @@ with open("model.onnx", "wb") as f:
 
 sess = InferenceSession("model.onnx", None)
 input_name = sess.get_inputs()[0].name
-res = sess.run(None, {input_name: test_features.astype(np.float32)})
+res = sess.run(None, {input_name: test_features})
 res = res[0][:, 0]
 
 print(res.shape)
