@@ -2,6 +2,8 @@ notebook
 pandas
 plotly
 sklearn
+skl2onnx
+onnxruntime
 lightgbm
 black
 pytest
