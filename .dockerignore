@@ -1,0 +1,6 @@
+.devcontainer
+.devcontainer/devcontainer.json
+.pytest_cache
+.vscode
+.tests
+

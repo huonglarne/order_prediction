@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-from src.api_gateway import app
+from src.prediction_api import pred_api
 
-client = TestClient(app)
+client = TestClient(pred_api)
 
 
 def test_predict_product_sale():

@@ -2,6 +2,9 @@
 	"name": "Python 3",
 	"context": "..",
 	"dockerFile": "../Dockerfile",
+	"build": { 
+		"target": "base" 
+	},
 	
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {

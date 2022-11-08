@@ -19,7 +19,3 @@ async def predict_product_sale(product_id: int):
     result = postprocess_prediction(result)[0]
 
     return {"sales for next week": result}
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
