@@ -29,8 +29,8 @@ def get_onnx_session(model_path: Path):
     return InferenceSession(str(model_path), None)
 
 
-def onnx_inference_single_input(session, input_data: ndarray):
-    """Run inference on an ONNX model."""
+def onnx_infere_single_inp_outp(session, input_data: ndarray):
+    """Run inference on an ONNX model with a single input and output."""
     input_name = session.get_inputs()[0].name
     result = session.run(None, {input_name: input_data.astype(np.float32)})
     return result[0]

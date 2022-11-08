@@ -1,7 +1,11 @@
 import pickle
 from pathlib import Path
 import numpy as np
-from src.onnx_utils import get_onnx_session, onnx_inference_single_input, sklearn_to_onnx
+from src.onnx_utils import (
+    get_onnx_session,
+    onnx_infere_single_inp_outp,
+    sklearn_to_onnx,
+)
 
 
 def test_sklearn_to_onnx():
@@ -14,7 +18,7 @@ def test_sklearn_to_onnx():
     sklearn_to_onnx(model, example_input, save_path)
 
     session = get_onnx_session(save_path)
-    result = onnx_inference_single_input(session, example_input)
+    result = onnx_infere_single_inp_outp(session, example_input)
     result = result[:, 0]
 
     assert np.allclose(expected_result, result)

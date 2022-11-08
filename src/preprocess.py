@@ -1,11 +1,14 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
+from typing import Tuple
 import pandas as pd
 from pandas import DataFrame
 
-from src.constants import RELEVANT_COLUMNS
+from src.constants import NUM_PAST_WEEKS, RELEVANT_COLUMNS
 
 
-def get_past_features(weekly_sales_data: DataFrame, num_past_weeks=2) -> DataFrame:
+def get_past_features(
+    weekly_sales_data: DataFrame, num_past_weeks=NUM_PAST_WEEKS
+) -> DataFrame:
     """Get past weeks' sales and sales difference as features.
 
     Args:
@@ -34,13 +37,11 @@ def get_past_features(weekly_sales_data: DataFrame, num_past_weeks=2) -> DataFra
     return weekly_sales_data
 
 
-def preprocess_data_order(order_data: DataFrame, end_date: str) -> DataFrame:
+def preprocess_order_data(order_data: DataFrame) -> DataFrame:
     """Preprocess the order data to weekly sales data over a period of all products in database.
 
     Args:
         order_data (DataFrame): Order data exported from database.
-        start_date (str): Start date. Format: YYYY-MM-DD
-        end_date (str): End date. Format: YYYY-MM-DD
 
     Returns:
         DataFrame: Weekly sales of all products.
@@ -49,19 +50,16 @@ def preprocess_data_order(order_data: DataFrame, end_date: str) -> DataFrame:
     assert RELEVANT_COLUMNS.issubset(all_columns)
     order_data = order_data.drop(all_columns - RELEVANT_COLUMNS, axis=1)
 
-    start_date = order_data["CHECKOUT_DATE"].min()
-    start_date = datetime.strptime(start_date, "%Y-%m-%d")
-    start_date = str(start_date.replace(day=1).date())
-
-    # end_date = order_data["CHECKOUT_DATE"].max()
-    # end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    start_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].min()
+    end_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].max()
+    start_date, end_date = _get_period_start_end(start_date, end_date)
 
     product_id_list = order_data["PRODUCT_ID"].unique()
     weekly_sales_data = None
 
     for prod_id in product_id_list:
         product_orders = order_data[order_data["PRODUCT_ID"] == prod_id]
-        product_weekly_sales = preprocess_to_weekly_sales(
+        product_weekly_sales = _preprocess_to_weekly_sales(
             product_orders, start_date, end_date
         )
 
@@ -80,7 +78,7 @@ def preprocess_data_order(order_data: DataFrame, end_date: str) -> DataFrame:
     return weekly_sales_data
 
 
-def preprocess_to_weekly_sales(
+def _preprocess_to_weekly_sales(
     product_orders: DataFrame, start_date: str, end_date: str
 ) -> DataFrame:
     """Preprocess the daily orders to weekly sales data over a period of a single product.
@@ -151,3 +149,28 @@ def _fill_missing_dates(
         .reset_index()
     )
     return product_orders
+
+
+def _get_period_start_end(start_date: str, end_date: str) -> Tuple[str, str]:
+    """Get the start and end date of the period.
+    First day of the first month and last day of the last month.
+
+    Args:
+        start_date (str): Earilest day recorded in DB. Format: YYYY-MM-DD
+        end_date (str): Latest day recorded in DB. Format: YYYY-MM-DD
+
+    Returns:
+        Tuple[str, str]: _description_
+    """
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    start_date = str(start_date.replace(day=1).date())
+
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    end_date = date(
+        end_date.year + int(end_date.month / 12), (end_date.month % 12) + 1, 1
+    ) - timedelta(
+        days=1
+    )  # get last day of the month
+    end_date = str(end_date)
+
+    return start_date, end_date
