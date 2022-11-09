@@ -20,11 +20,15 @@ def test_get_past_features():
         "last-1_week_diff",
     }
 
+    assert features.shape[0] == 48
+
 
 def test_preprocess_data_order():
     """Docstring"""
     product_orders = pd.read_csv("tests/test_data/product_orders.csv")
     product_weekly_sales_data = preprocess_order_data(product_orders)
+
+    assert set(weekly_sales_data.columns) == {"product", "week_start", "sales"}
     assert product_weekly_sales_data["sales"].tolist() == [
         2,
         8,
@@ -48,8 +52,7 @@ def test_preprocess_data_order():
 
 
     order_data = pd.read_csv("tests/test_data/data_orders.csv")
-    weekly_sales_data = preprocess_order_data(order_data)
+    weekly_sales_data = preprocess_order_data(order_data, start_date="2022-02-11", end_date="2022-04-30")
 
-    assert set(weekly_sales_data.columns) == {"product", "week_start", "sales"}
-    assert weekly_sales_data["week_start"].min() == pd.Timestamp("2022-01-03")
-    assert weekly_sales_data["week_start"].max() == pd.Timestamp("2022-05-30")
+    assert weekly_sales_data["week_start"].min() == pd.Timestamp("2022-02-14")
+    assert weekly_sales_data["week_start"].max() == pd.Timestamp("2022-05-02")

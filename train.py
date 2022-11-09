@@ -14,7 +14,7 @@ from src.preprocess import get_past_features, preprocess_order_data
 # Feature engineering
 order_data = pd.read_csv("data/data_order.csv")
 
-weekly_sales_data = preprocess_order_data(order_data)
+weekly_sales_data = preprocess_order_data(order_data, start_date="2022-01-01", end_date="2022-04-30")
 weekly_sales_data.to_csv("data/weekly_sales_data.csv", index=False)
 
 features = get_past_features(weekly_sales_data, num_past_weeks=NUM_PAST_WEEKS)

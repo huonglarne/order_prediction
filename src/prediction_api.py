@@ -2,7 +2,7 @@ import pandas as pd
 from joblib import load
 from fastapi import FastAPI
 import uvicorn
-from src.inference_utils import get_product_latest_features, postprocess_prediction
+from src.inference_utils import get_product_nextweek_features, postprocess_prediction
 from src.constants import MODEL_JOBLIB_CHECKPOINT
 
 app = FastAPI()
@@ -14,8 +14,13 @@ weekly_sales_data = pd.read_csv(
 
 @app.get("/predict/{product_id}")
 async def predict_product_sale(product_id: int):
-    features = get_product_latest_features(product_id, weekly_sales_data)
-    result = model.predict(features)
-    result = postprocess_prediction(result)[0]
+    next_week, features = get_product_nextweek_features(product_id, weekly_sales_data)
+    prediction = model.predict(features)
+    prediction = postprocess_prediction(prediction)[0]
 
-    return {"sales for next week": result}
+    result =  {
+        "week start": str(next_week.date()),
+        "sales": prediction
+    }
+
+    return result

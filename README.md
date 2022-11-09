@@ -62,3 +62,8 @@ Predict the sales for next week for product with ID 4048:
 ```
 curl 0.0.0.0:80/predict/4048
 ```
+
+
+```
+uvicorn src.prediction_api:app --host 0.0.0.0 --port 80
+```

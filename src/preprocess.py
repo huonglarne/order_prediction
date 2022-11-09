@@ -1,7 +1,7 @@
 from calendar import monthrange
 from datetime import datetime
 import pandas as pd
-from pandas import DataFrame
+from pandas import DataFrame, Timestamp
 
 from src.constants import NUM_PAST_WEEKS, RELEVANT_COLUMNS
 
@@ -59,6 +59,11 @@ def preprocess_order_data(
     data_order["CHECKOUT_DATE"] = pd.to_datetime(
         data_order["CHECKOUT_DATE"], format="%Y-%m-%d"
     )
+
+    if start_date:
+        data_order = data_order[data_order["CHECKOUT_DATE"] > Timestamp(start_date)]
+    if end_date:
+        data_order = data_order[data_order["CHECKOUT_DATE"] < Timestamp(end_date)]
 
     data_order = (
         data_order.groupby(
