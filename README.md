@@ -1,27 +1,70 @@
 # Order prediction
 
-## Objective
+# Objective
 
-- Make predictions in terms of the quantity of a given product in the next 30 days.
+- Make predictions in terms of the quantity of a given product in the next days.
 
 - Create a backend service to serve the model in a 'production' environment.
 
-## Solution
+# Solution
 
-# How to run
+- Train a Random Forest Regressor with weekly sales data to predict the sales of any product in future weeks.
 
-Train
+- Serve the prediction model in a Docker container with an API endpoint exposed to the outside.
+
+# Set up
+
+## Development environment
+
+All dependencies have been installed in the [VS Code dev container](https://code.visualstudio.com/docs/devcontainers/containers).
+
+This environment is used for data processing, training and other development activities.
+
+To open:
+
+- Open the repository in VS Code
+
+- Open command palette: ```Ctrl + P ``` and then ```>```
+
+- Type "Open folder in container" and select
+
+## Production environment
+
+Docker should be installed on your machine in order to run the production container.
+
+# Training
+
+Run inside VS Code dev container:
 
 ```
 python train.py
 ```
 
-Infere
+## Data preprocessing
+
+## Feature Engineering
+
+## Model training
+
+
+# Serving
+
+## Serving from local machine
+
+Build the image:
 
 ```
-python serve.py
+docker build order_pred:latest .
 ```
 
+Open a local host from the container to serve the model:
+
 ```
-curl http://0.0.0.0:8000/predict/4048
+docker run --net-work=host order_pred:latest
+```
+
+Predict the sales for next week for product with ID 4048:
+
+```
+curl 0.0.0.0:80/predict/4048
 ```

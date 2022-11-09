@@ -37,11 +37,17 @@ def get_past_features(
     return weekly_sales_data
 
 
-def preprocess_order_data(order_data: DataFrame) -> DataFrame:
+def preprocess_order_data(
+    order_data: DataFrame, start_date: str = None, end_date: str = None
+) -> DataFrame:
     """Preprocess the order data to weekly sales data over a period of all products in database.
 
     Args:
         order_data (DataFrame): Order data exported from database.
+        start_date (str, optional): Start of period to take data from. Format: YYYY-MM-DD.
+        If not provided, the earliest date in the DB will be used.
+        Must be be accompanied by end_date.
+        end_date (str, optional): End of period to take data from. Format: YYYY-MM-DD.
 
     Returns:
         DataFrame: Weekly sales of all products.
@@ -50,9 +56,10 @@ def preprocess_order_data(order_data: DataFrame) -> DataFrame:
     assert RELEVANT_COLUMNS.issubset(all_columns)
     order_data = order_data.drop(all_columns - RELEVANT_COLUMNS, axis=1)
 
-    start_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].min()
-    end_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].max()
-    start_date, end_date = _get_period_start_end(start_date, end_date)
+    if start_date is None or end_date is None:
+        start_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].min()
+        end_date = order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].max()
+        start_date, end_date = _get_period_start_end(start_date, end_date)
 
     product_id_list = order_data["PRODUCT_ID"].unique()
     weekly_sales_data = None
