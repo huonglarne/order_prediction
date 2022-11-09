@@ -13,13 +13,13 @@ def get_product_nextweek_features(
     num_past_weeks: int = NUM_PAST_WEEKS,
 ) -> ndarray:
     assert set(weekly_sales_data.columns) == {"week_start", "product", "sales"}
-    
-    if weekly_sales_data["week_start"].dtypes != "datetime64[ns]":
-        weekly_sales_data["week_start"] = pd.to_datetime(weekly_sales_data["week_start"])
 
-    prod_sales = weekly_sales_data[
-        weekly_sales_data["product"] == product_id
-    ]
+    if weekly_sales_data["week_start"].dtypes != "datetime64[ns]":
+        weekly_sales_data["week_start"] = pd.to_datetime(
+            weekly_sales_data["week_start"]
+        )
+
+    prod_sales = weekly_sales_data[weekly_sales_data["product"] == product_id]
 
     next_week = prod_sales["week_start"].max() + timedelta(days=7)
     prod_sales.loc[len(prod_sales.index)] = {

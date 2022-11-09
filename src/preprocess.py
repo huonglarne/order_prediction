@@ -65,14 +65,16 @@ def preprocess_order_data(
     if end_date:
         data_order = data_order[data_order["CHECKOUT_DATE"] < Timestamp(end_date)]
 
-    data_order = (
-        data_order.groupby(
-            [pd.Grouper(key="CHECKOUT_DATE", freq="W-MON"), "PRODUCT_ID"]
-        )
-        .sum()
-    )
+    data_order = data_order.groupby(
+        [pd.Grouper(key="CHECKOUT_DATE", freq="W-MON"), "PRODUCT_ID"]
+    ).sum()
 
-    data_order = data_order.pivot_table(values=['QUANTITY'], index=['PRODUCT_ID'], columns=['CHECKOUT_DATE'], fill_value=0)
+    data_order = data_order.pivot_table(
+        values=["QUANTITY"],
+        index=["PRODUCT_ID"],
+        columns=["CHECKOUT_DATE"],
+        fill_value=0,
+    )
     data_order = data_order.droplevel(0, axis=1).reset_index()
     data_order.columns.name = None
 
@@ -90,7 +92,6 @@ def preprocess_order_data(
 #     end_date = end_date or _get_last_day_of_month(
 #         order_data[order_data["QUANTITY"] > 0]["CHECKOUT_DATE"].max()
 #     )
-
 
 
 def _get_first_day_of_month(date: str) -> str:

@@ -18,9 +18,6 @@ async def predict_product_sale(product_id: int):
     prediction = model.predict(features)
     prediction = postprocess_prediction(prediction)[0]
 
-    result =  {
-        "week start": str(next_week.date()),
-        "sales": prediction
-    }
+    result = {"week start": str(next_week.date()), "sales": prediction}
 
     return result
