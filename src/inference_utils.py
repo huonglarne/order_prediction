@@ -1,3 +1,5 @@
+from datetime import timedelta
+import pandas as pd
 import numpy as np
 from numpy import ndarray
 from pandas import DataFrame
@@ -7,15 +9,18 @@ from src.constants import NON_FEATURES, NUM_PAST_WEEKS
 
 def get_product_latest_features(
     product_id: int,
-    latest_weekly_sales_data: DataFrame,
+    weekly_sales_data: DataFrame,
     num_past_weeks: int = NUM_PAST_WEEKS,
 ) -> ndarray:
-    prod_sales = latest_weekly_sales_data[
-        latest_weekly_sales_data["product"] == product_id
+    if weekly_sales_data["week_start"].dtypes != "datetime64[ns]":
+        weekly_sales_data["week_start"] = pd.to_datetime(weekly_sales_data["week_start"])
+
+    prod_sales = weekly_sales_data[
+        weekly_sales_data["product"] == product_id
     ]
     prod_sales.loc[len(prod_sales.index)] = {
         "product": product_id,
-        "week": prod_sales["week"].max() + 1,
+        "week_start": prod_sales["week_start"].max() + timedelta(days=7),
         "sales": 0,
     }
 

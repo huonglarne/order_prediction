@@ -2,7 +2,7 @@
 
 # Objective
 
-- Make predictions in terms of the quantity of a given product in the next days.
+- Make predictions on the quantity of orders of a given product in the next days.
 
 - Create a backend service to serve the model in a 'production' environment.
 
@@ -40,12 +40,6 @@ Run inside VS Code dev container:
 python train.py
 ```
 
-## Data preprocessing
-
-## Feature Engineering
-
-## Model training
-
 
 # Serving
 
@@ -54,7 +48,7 @@ python train.py
 Build the image:
 
 ```
-docker build order_pred:latest .
+docker build order_pred:latest --target production .
 ```
 
 Open a local host from the container to serve the model:

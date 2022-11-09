@@ -1,3 +1,4 @@
+from datetime import timedelta
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
@@ -20,15 +21,13 @@ features = get_past_features(weekly_sales_data, num_past_weeks=NUM_PAST_WEEKS)
 
 
 # Split data
-start_week = (
-    int(features.min()["week"]) + 1
-)  # each week must have at least 1 week before it to predict
-end_week = int(features.max()["week"])
-num_weeks = end_week - start_week
-train_val_week_split = start_week + round(num_weeks * 0.8)
+start_week = features.min()["week_start"] + timedelta(days=7) # each week must have at least 1 week before it to predict
+end_week = features.max()["week_start"]
+num_weeks = (end_week - start_week).days/7
+train_split = start_week + timedelta(round(num_weeks * 0.8 * 7))
 
-train = features[features["week"] <= train_val_week_split]
-val = features[features["week"] > train_val_week_split]
+train = features[features["week_start"] <= train_split]
+val = features[features["week_start"] > train_split]
 
 train_features = train.drop(NON_FEATURES, axis=1).values
 train_sales_gt = train["sales"].values

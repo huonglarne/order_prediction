@@ -1,5 +1,5 @@
 RELEVANT_COLUMNS = {"PRODUCT_ID", "QUANTITY", "CHECKOUT_DATE"}
-NON_FEATURES = {"sales", "product", "week"}
+NON_FEATURES = {"sales", "product", "week_start"}
 NUM_PAST_WEEKS = 2
 
 MODEL_JOBLIB_CHECKPOINT = "checkpoints/model.joblib"

@@ -9,9 +9,12 @@ from src.onnx_utils import (
     sklearn_to_onnx,
 )
 from src.inference_utils import get_product_latest_features, postprocess_prediction
+from src.preprocess import preprocess_order_data
 
 
 def test_get_product_latest_features():
-    weekly_sales_data = pd.read_csv("data/weekly_sales_data.csv")
+    order_data = pd.read_csv("tests/test_data/data_orders.csv")
+    weekly_sales_data = preprocess_order_data(order_data)
+    
     features = get_product_latest_features(4048, weekly_sales_data)
     assert features.shape == (1, 4)
