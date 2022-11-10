@@ -4,7 +4,7 @@ from src.preprocess import get_past_features, preprocess_order_data
 
 def test_get_past_features():
     """Docstring"""
-    order_data = pd.read_csv("tests/test_data/data_orders.csv")
+    order_data = pd.read_csv("tests/example_data/data_orders.csv")
     weekly_sales_data = preprocess_order_data(order_data, "2022-01-01", "2022-04-30")
 
     features = get_past_features(weekly_sales_data, num_past_weeks=1)
@@ -22,7 +22,7 @@ def test_get_past_features():
 
 def test_preprocess_data_order():
     """Docstring"""
-    product_orders = pd.read_csv("tests/test_data/product_orders.csv")
+    product_orders = pd.read_csv("tests/example_data/product_orders.csv")
     product_weekly_sales_data = preprocess_order_data(product_orders)
 
     assert set(product_weekly_sales_data.columns) == {"product", "week_start", "sales"}
@@ -47,7 +47,7 @@ def test_preprocess_data_order():
         3,
     ]
 
-    order_data = pd.read_csv("tests/test_data/data_orders.csv")
+    order_data = pd.read_csv("tests/example_data/data_orders.csv")
     weekly_sales_data = preprocess_order_data(
         order_data, start_date="2022-02-11", end_date="2022-04-30"
     )

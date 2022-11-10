@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 import pandas as pd
 from joblib import load
 from fastapi import FastAPI
@@ -21,3 +22,19 @@ async def predict_product_sale(product_id: int):
     result = {"week start": str(next_week.date()), "sales": prediction}
 
     return result
+
+
+class Features(BaseModel):
+    features: list[list[float]]
+
+
+class Prediction(BaseModel):
+    prediction: list[float]
+
+
+@app.post("/inference", response_model=Prediction)
+async def predict_product_sale(data: Features):
+    prediction = model.predict(data.features)
+    prediction = postprocess_prediction(prediction).tolist()
+
+    return Prediction(prediction=prediction)

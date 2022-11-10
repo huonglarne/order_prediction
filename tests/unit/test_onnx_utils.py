@@ -10,11 +10,11 @@ from src.onnx_utils import (
 
 def test_sklearn_to_onnx():
     """Docstring"""
-    model = pickle.load(open("tests/test_data/model.pkl", "rb"))
+    model = pickle.load(open("tests/example_data/model.pkl", "rb"))
     example_input = np.array([[4.0, -6.0]])
 
     expected_result = model.predict(example_input)
-    save_path = Path("tests/test_data/model.onnx")
+    save_path = Path("tests/example_data/model.onnx")
     sklearn_to_onnx(model, example_input, save_path)
 
     session = get_onnx_session(save_path)
