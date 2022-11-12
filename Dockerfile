@@ -1,16 +1,12 @@
-# FROM mcr.microsoft.com/devcontainers/python:3.9 AS base
+FROM nvcr.io/nvidia/tritonserver:22.09-py3 AS base
 
-# COPY requirements.txt /tmp/
-# RUN pip install -r /tmp/requirements.txt
+COPY requirements.txt /tmp/
+RUN pip install -r /tmp/requirements.txt
 
-# FROM base AS production
+FROM base AS production
 
-# WORKDIR /app
-# COPY . /app
-
-# CMD ["uvicorn", "src.prediction_api:app", "--host", "0.0.0.0", "--port", "80"]
-
-
-FROM nvcr.io/nvidia/tritonserver:22.09-py3
 COPY ./models /models
-CMD ["tritonserver", "--model-repository=/models", "--grpc-port=8001", "--allow-metrics=false", "--allow-http=false", "--exit-timeout-secs=300", "--log-verbose=3", "--strict-model-config=false"]
+
+EXPOSE 8001
+
+CMD ["tritonserver", "--model-repository=/models", "--http-port=8001", "--allow-metrics=false", "--allow-http=true", "--exit-timeout-secs=3", "--log-verbose=3", "--strict-model-config=false"]

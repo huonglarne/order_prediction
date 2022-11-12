@@ -7,4 +7,5 @@ pytest
 fastapi
 uvicorn
 requests
-apscheduler
+grpcio
+tritonclient[http]

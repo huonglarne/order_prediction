@@ -54,3 +54,6 @@ def test_preprocess_data_order():
 
     assert weekly_sales_data["week_start"].min() == pd.Timestamp("2022-02-14")
     assert weekly_sales_data["week_start"].max() == pd.Timestamp("2022-05-02")
+
+    count_table = weekly_sales_data.groupby("product").count()
+    assert len(count_table["week_start"].unique()) == 1

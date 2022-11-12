@@ -2,8 +2,13 @@ from datetime import timedelta
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from joblib import dump, load
-from src.constants import NON_FEATURES, NUM_PAST_WEEKS
+from joblib import dump
+from src.constants import (
+    MODEL_JOBLIB_CHECKPOINT,
+    MODEL_ONNX_CHECKPOINT,
+    NON_FEATURES,
+    NUM_PAST_WEEKS,
+)
 from src.inference_utils import postprocess_prediction
 from src.onnx_utils import sklearn_to_onnx
 
@@ -49,5 +54,5 @@ error = rmse(val_sales_gt, val_sales_pred)
 print("Error: %.5f" % error)
 
 # Checkpoint
-dump(model, "chekpoints/model.joblib")
-sklearn_to_onnx(model, val_features[:1], "models/prediction_model/1/model.onnx")
+dump(model, MODEL_JOBLIB_CHECKPOINT)
+sklearn_to_onnx(model, val_features[:1], MODEL_ONNX_CHECKPOINT)
