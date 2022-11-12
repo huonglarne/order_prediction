@@ -67,3 +67,7 @@ curl 0.0.0.0:80/predict/4048
 ```
 uvicorn src.prediction_api:app --host 0.0.0.0 --port 80
 ```
+
+```
+docker build -t name:tag --build-arg MODEL_BASE_DIR=models -f .devcontainer/server/Dockerfile .
+```

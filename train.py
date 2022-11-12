@@ -49,5 +49,5 @@ error = rmse(val_sales_gt, val_sales_pred)
 print("Error: %.5f" % error)
 
 # Checkpoint
-dump(model, "checkpoints/model.joblib")
-sklearn_to_onnx(model, val_features[:1], "checkpoints/model.onnx")
+dump(model, "chekpoints/model.joblib")
+sklearn_to_onnx(model, val_features[:1], "models/prediction_model/1/model.onnx")
