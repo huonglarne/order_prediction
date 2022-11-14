@@ -1,10 +1,13 @@
 {
 	"name": "Python 3",
+
 	"context": "..",
-	"dockerFile": "Dockerfile",
-	"build": { 
-		"target": "base" 
+	"dockerFile": "../docker/Dockerfile",
+	"build": {
+		"target": "base"
 	},
+
+	"workspaceFolder": "/workspace",
 	
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
