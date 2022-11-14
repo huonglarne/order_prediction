@@ -23,7 +23,9 @@ async def predict_product_sale(product_id: int):
 
     prediction = model.predict(features)
 
-    prediction = postprocess_prediction(prediction)[0]
+    prediction = postprocess_prediction(prediction)
+    
+    prediction = prediction[0]
 
     result = {"week start": str(next_week.date()), "sales": prediction}
 
@@ -36,7 +38,9 @@ async def predict_product_sale_alt(product_id: int):
 
     prediction = get_triton_model_output(features)
 
-    prediction = postprocess_prediction(prediction)[0]
+    prediction = postprocess_prediction(prediction)
+
+    prediction = prediction.tolist()[0][0]
 
     result = {"week start": str(next_week.date()), "sales": prediction}
 

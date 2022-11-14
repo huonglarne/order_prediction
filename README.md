@@ -75,3 +75,7 @@ docker build -t name:tag --build-arg MODEL_BASE_DIR=models -f .devcontainer/serv
 ```
 docker compose -f docker/docker-compose.yml build
 ```
+
+```
+curl 172.21.0.2:9001/predict_alt/4048
+```
