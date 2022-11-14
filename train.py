@@ -25,6 +25,7 @@ weekly_sales_data = preprocess_order_data(
 weekly_sales_data.to_csv("data/weekly_sales_data.csv", index=False)
 
 features = get_past_features(weekly_sales_data, num_past_weeks=NUM_PAST_WEEKS)
+features.to_csv("data/features.csv", index=False)
 
 
 # Split data

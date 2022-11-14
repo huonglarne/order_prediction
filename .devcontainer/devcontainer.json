@@ -6,7 +6,7 @@
 	"build": {
 		"target": "base"
 	},
-
+	"workspaceMount": "type=bind,src=${localWorkspaceFolder},dst=/workspace",
 	"workspaceFolder": "/workspace",
 	
 	"features": {

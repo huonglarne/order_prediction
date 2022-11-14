@@ -8,4 +8,4 @@ fastapi
 uvicorn
 requests
 grpcio
-tritonclient[http]
+tritonclient
